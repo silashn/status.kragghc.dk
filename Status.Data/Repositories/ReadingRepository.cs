@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Status.Data.Contexts;
 using Status.Data.Models;
 using Status.Data.Repositories.Interfaces;
@@ -12,28 +13,27 @@ namespace Status.Data.Repositories
 {
     public class ReadingRepository : IReadingRepository
     {
-        private readonly IConfigurationRoot config;
-        private readonly StatusDbContext context;
+        private readonly StatusDbContext db;
 
-        public ReadingRepository(IConfigurationRoot config)
+        public ReadingRepository(DbContextOptions<StatusDbContext> options)
         {
-            this.config = config;
-            context = new StatusDbContext(options => options.Use);
+            db = new StatusDbContext(options);
         }
 
         public void CreateReading(Reading reading)
         {
-            
+            db.Readings.Add(reading);
+            db.SaveChanges();
         }
 
         public Reading GetLatestReading()
         {
-            throw new NotImplementedException();
+            return db.Readings.OrderByDescending(r => r.Created).FirstOrDefault();
         }
 
         public Reading GetReading(int id)
         {
-            throw new NotImplementedException();
+            return db.Readings.FirstOrDefault(r => r.ID.Equals(id));
         }
     }
 }

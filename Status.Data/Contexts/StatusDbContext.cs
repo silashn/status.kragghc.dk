@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Design;
+using Status.Data.Models;
 
 namespace Status.Data.Contexts
 {
     public class StatusDbContext : DbContext
     {
+        public DbSet<Reading> Readings { get; set; }
+        public DbSet<Disk> Disks { get; set; }
         public StatusDbContext(DbContextOptions<StatusDbContext> options) : base(options)
         {
 

@@ -9,8 +9,9 @@ namespace Status.Data.Models
     public class Reading
     {
         public int ID { get; set; }
-        public decimal CPU { get; set; }
-        public decimal RAM { get; set; }
-        public decimal Disk { get; set; }
+        public DateTime Created { get; set; }
+        public int CPU { get; set; }
+        public double RAM { get; set; }
+        public List<Disk> Disks { get; set; }
     }
 }
