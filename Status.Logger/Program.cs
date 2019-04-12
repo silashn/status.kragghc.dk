@@ -15,7 +15,7 @@ namespace Status.Logger
     {
         static void Main(string[] args)
         {
-            IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory() + "../../../../").AddJsonFile("Config/AppSettings.json");
+            IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("C:/Data/Tasks/status.kragghc.dk/Logger/Config/AppSettings.json", false);
             IConfigurationRoot configuration = builder.Build();
             DbContextOptions<StatusDbContext> options = new DbContextOptionsBuilder<StatusDbContext>().UseSqlServer(configuration.GetConnectionString("status.kragghc.dk"), o => o.MigrationsAssembly("Status.Data")).Options;
             ReadingRepository readingRepository = new ReadingRepository(options);
