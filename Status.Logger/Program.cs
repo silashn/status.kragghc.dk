@@ -6,6 +6,7 @@ using Status.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Management;
 
@@ -15,6 +16,7 @@ namespace Status.Logger
     {
         static void Main(string[] args)
         {
+
             IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("C:/Data/Tasks/status.kragghc.dk/Logger/Config/AppSettings.json", false);
             IConfigurationRoot configuration = builder.Build();
             DbContextOptions<StatusDbContext> options = new DbContextOptionsBuilder<StatusDbContext>().UseSqlServer(configuration.GetConnectionString("status.kragghc.dk"), o => o.MigrationsAssembly("Status.Data")).Options;
@@ -37,7 +39,7 @@ namespace Status.Logger
             Reading reading = new Reading()
             {
                 CPU = cpuPercentage,
-                Created = DateTime.Now,
+                Time = DateTime.Now.ToString("dddd, dd/MM/yyyy HH:mm", new CultureInfo("da-DK")),
                 RAM = Convert.ToDouble(RAMCounter.NextValue())
             };
 
@@ -57,10 +59,7 @@ namespace Status.Logger
             }
 
             reading.Disks = Disks;
-
             readingRepository.CreateReading(reading);
-
-            Reading newReading = readingRepository.GetLatestReading();
         }
 
         static readonly string[] SizeSuffixes =

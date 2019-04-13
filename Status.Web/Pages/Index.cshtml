@@ -1,0 +1,121 @@
+﻿@page
+@model Status.Web.Pages.IndexModel
+@{
+}
+<h1>Status</h1>
+<canvas id="CPU"></canvas>
+<div id="RAM"></div>
+<div id="Disks"></div>
+<div id="Created"></div>
+
+<script type="text/javascript">
+
+    $(window).ready(function()
+    {
+        Load();
+    });
+    setInterval(Load, 5000);
+
+    function Load()
+    {
+        $.ajax
+            ({
+                type: 'GET',
+                url: '/Get/LatestHour',
+                success: function(result)
+                {
+
+
+                    //$("#CPU #Current").html(result.cpu);
+                    $("#RAM").html(result[0].ram);
+                    var disks = "";
+                    for(var i = 0; i < result[result.length - 1].disks.length; i++)
+                    {
+                        disks += "<div class='disk'><div class='disk_name'>" + result[result.length - 1].disks[i].name + "</div><div class='disk_freespace'>" + result[result.length - 1].disks[i].freeSpace + "</div></div>";
+                    }
+                    $("#Disks").html(disks);
+                    $("#Created").html(result[result.length - 1].time.replace("-", "/").replace("-", "/"));
+                    var time = [];
+                    var cpu = [];
+                    for(var i = 0; i < result.length; i++)
+                    {
+                        time.push(result[i].time.substring(result[i].time.lastIndexOf(" ") + 1));
+                        cpu.push(result[i].cpu);
+                    }
+                    console.log(time);
+                    var config =
+                    {
+                        type: 'line',
+                        data: {
+                            labels: time,
+                            datasets: [{
+                                backgroundColor: "#9E2EE8",
+                                borderColor: "#9E2EE8",
+                                data:cpu,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            animation: false,
+                            legend:
+                            {
+                                display: false
+                            },
+                            responsive: false,
+                            tooltips:
+                            {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            hover:
+                            {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            scales:
+                            {
+                                xAxes:
+                                    [{
+                                        display: true,
+                                        scaleLabel:
+                                        {
+                                            display: true,
+                                            labelString: 'Time'
+                                        }
+                                    }],
+                                yAxes:
+                                    [{
+                                        display: true,
+                                        scaleLabel:
+                                        {
+                                            display: true,
+                                            labelString: '% CPU Usage'
+                                        }
+                                    }]
+                            },
+                            elements:
+                            {
+                                point:
+                                {
+                                    radius: 0
+                                },
+                                tooltip:
+                                {
+                                    yAlign: 'bottom'
+                                }
+                            }
+                        }
+                    };
+
+                    var ctx = document.getElementById('CPU').getContext('2d');
+                    window.myLine = new Chart(ctx, config);
+
+                },
+                error: function(e)
+                {
+                    console.log("error:");
+                    console.log(e);
+                }
+            });
+    }
+</script>

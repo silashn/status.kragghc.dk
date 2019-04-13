@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <None Include="Config\AppSettings.json" />
+    <None Include="wwwroot\Assets\CSS\Main.css" />
+    <None Include="wwwroot\Assets\JavaScript\JQuery.js" />
   </ItemGroup>
 
   <ItemGroup>

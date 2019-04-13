@@ -19,7 +19,8 @@ namespace Status.Web
         {
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory + "../../../")
-                .AddJsonFile("Config/AppSettings.json");
+                .AddJsonFile("Config/AppSettings.json")
+                .AddEnvironmentVariables();
 
             config = builder.Build();
         }
@@ -28,7 +29,9 @@ namespace Status.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             Configurator.ConfigureServices(services, config);
+            services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

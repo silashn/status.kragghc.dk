@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Status.Logger", "Status.Logger\Status.Logger.csproj", "{E3FDA466-FA89-400B-B26B-ABD5293AB9D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Status.Logger", "Status.Logger\Status.Logger.csproj", "{E3FDA466-FA89-400B-B26B-ABD5293AB9D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Status.Data", "Status.Data\Status.Data.csproj", "{5265FDB8-A749-4B74-A69B-01058295BCB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Status.Data", "Status.Data\Status.Data.csproj", "{5265FDB8-A749-4B74-A69B-01058295BCB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Status.Web", "Status.Web\Status.Web.csproj", "{CB89C0CB-DDAA-41C3-B539-915798587596}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Status.Web", "Status.Web\Status.Web.csproj", "{CB89C0CB-DDAA-41C3-B539-915798587596}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Status.Configuration", "Status.Configuration\Status.Configuration.csproj", "{81691612-A1CD-47DC-B6BC-EEA9D14E37A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Status.Configuration", "Status.Configuration\Status.Configuration.csproj", "{81691612-A1CD-47DC-B6BC-EEA9D14E37A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

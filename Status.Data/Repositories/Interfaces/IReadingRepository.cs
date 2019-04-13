@@ -11,6 +11,11 @@ namespace Status.Data.Repositories.Interfaces
     {
         Reading GetLatestReading();
         Reading GetReading(int id);
+        List<Reading> GetReadings();
+        List<Reading> GetReadings(DateTime from);
+        List<Reading> GetReadings(DateTime from, DateTime to);
+        List<Reading> GetReadings(int recent);
+
 
         void CreateReading(Reading reading);
     }

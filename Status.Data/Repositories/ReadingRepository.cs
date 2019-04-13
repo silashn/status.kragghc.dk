@@ -22,18 +22,39 @@ namespace Status.Data.Repositories
 
         public void CreateReading(Reading reading)
         {
+            reading.Created = DateTime.Now;
             db.Readings.Add(reading);
             db.SaveChanges();
         }
 
         public Reading GetLatestReading()
         {
-            return db.Readings.OrderByDescending(r => r.Created).FirstOrDefault();
+            return db.Readings.Include(r => r.Disks).OrderByDescending(r => r.Created).FirstOrDefault();
         }
 
         public Reading GetReading(int id)
         {
-            return db.Readings.FirstOrDefault(r => r.ID.Equals(id));
+            return db.Readings.Include(r => r.Disks).FirstOrDefault(r => r.ID.Equals(id));
+        }
+
+        public List<Reading> GetReadings()
+        {
+            return db.Readings.Include(r => r.Disks).OrderByDescending(r => r.Created).ToList();
+        }
+
+        public List<Reading> GetReadings(DateTime from)
+        {
+            return db.Readings.Include(r => r.Disks).Where(r => r.Created >= from).OrderBy(r => r.Created).ToList();
+        }
+
+        public List<Reading> GetReadings(DateTime from, DateTime to)
+        {
+            return db.Readings.Include(r => r.Disks).Where(r => r.Created >= from && r.Created <= to).OrderBy(r => r.Created).ToList();
+        }
+
+        public List<Reading> GetReadings(int recent)
+        {
+            return db.Readings.Include(r => r.Disks).OrderBy(r => r.Created).Take(recent).ToList();
         }
     }
 }

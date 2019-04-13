@@ -9,6 +9,7 @@ namespace Status.Data.Models
     public class Reading
     {
         public int ID { get; set; }
+        public string Time { get; set; }
         public DateTime Created { get; set; }
         public int CPU { get; set; }
         public double RAM { get; set; }
