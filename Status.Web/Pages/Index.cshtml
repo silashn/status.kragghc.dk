@@ -42,7 +42,7 @@
                         time.push(result[i].time.substring(result[i].time.lastIndexOf(" ") + 1));
                         cpu.push(result[i].cpu);
                     }
-                    console.log(time);
+
                     var config =
                     {
                         type: 'line',
@@ -51,7 +51,7 @@
                             datasets: [{
                                 backgroundColor: "#9E2EE8",
                                 borderColor: "#9E2EE8",
-                                data:cpu,
+                                data: cpu,
                                 fill: true
                             }]
                         },
@@ -85,6 +85,11 @@
                                     }],
                                 yAxes:
                                     [{
+                                        ticks:
+                                        {
+                                            min: 0,
+                                            max: 100
+                                        },
                                         display: true,
                                         scaleLabel:
                                         {
