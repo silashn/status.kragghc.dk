@@ -10,7 +10,7 @@ html, body
     text-transform:capitalize;
 }
 
-#CPU
+#CPU_Container
 {
     margin:0 auto;
     width:60vw;

@@ -6,13 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Config\AppSettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Config\AppSettings.json" CopyToPublishDirectory="Always"/>
-    <None Include="wwwroot\Assets\CSS\Main.css" />
-    <None Include="wwwroot\Assets\JavaScript\JQuery.js" />
+    <None Include="wwwroot\Assets\CSS\Main.css" CopyToPublishDirectory="Always"/>
+    <None Include="wwwroot\Assets\JavaScript\JQuery.js" CopyToPublishDirectory="Always"/>
   </ItemGroup>
 
   <ItemGroup>
