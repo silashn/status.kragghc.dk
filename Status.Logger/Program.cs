@@ -16,17 +16,18 @@ namespace Status.Logger
     {
         static void Main(string[] args)
         {
-
-            IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("C:/Data/Tasks/status.kragghc.dk/Logger/Config/AppSettings.json", false);
+            IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("C:/Data/Tasks/azure.aspiri.dk/Logger/Config/AppSettings.json", false);
             IConfigurationRoot configuration = builder.Build();
-            DbContextOptions<StatusDbContext> options = new DbContextOptionsBuilder<StatusDbContext>().UseSqlServer(configuration.GetConnectionString("status.kragghc.dk"), o => o.MigrationsAssembly("Status.Data")).Options;
+            DbContextOptions<StatusDbContext> options = new DbContextOptionsBuilder<StatusDbContext>().UseSqlServer(configuration.GetConnectionString("azure.aspiri.dk"), o => o.MigrationsAssembly("Status.Data")).Options;
             ReadingRepository readingRepository = new ReadingRepository(options);
 
             PerformanceCounter CPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            PerformanceCounter RAMCounter = new PerformanceCounter("Memory", "Available MBytes");
+            PerformanceCounter RAMCounter = new PerformanceCounter("Memory", "% Committed Bytes In Use");
             ManagementObject Disk = new ManagementObject("win32_logicaldisk.deviceid=\"c:\"");
 
-            ObjectQuery ObjectQuery = new ObjectQuery("SELECT * FROM Win32_LogicalDisk");
+
+
+            ObjectQuery ObjectQuery = new ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE VolumeName IS NOT NULL");
             ManagementObjectSearcher ObjectSearcher = new ManagementObjectSearcher(ObjectQuery);
             ManagementObjectCollection ObjectCollection = ObjectSearcher.Get();
 
@@ -45,11 +46,11 @@ namespace Status.Logger
 
             List<Disk> Disks = new List<Disk>();
 
-            foreach(ManagementObject disk in ObjectCollection)
+            foreach (ManagementObject disk in ObjectCollection)
             {
                 Disk newDisk = new Disk()
                 {
-                    Name = disk["Name"].ToString(),
+                    Name = disk["VolumeName"].ToString(),
                     DeviceID = disk["DeviceID"].ToString(),
                     Size = Convert.ToInt64(disk["Size"]),
                     FreeSpace = Convert.ToInt64(disk["FreeSpace"]),
@@ -66,9 +67,9 @@ namespace Status.Logger
                    { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
         static string SizeSuffix(Int64 value, int decimalPlaces = 1)
         {
-            if(decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
-            if(value < 0) { return "-" + SizeSuffix(-value); }
-            if(value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
+            if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
+            if (value < 0) { return "-" + SizeSuffix(-value); }
+            if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
 
             // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
             int mag = (int)Math.Log(value, 1024);
@@ -79,7 +80,7 @@ namespace Status.Logger
 
             // make adjustment when the value is large enough that
             // it would round up to 1000 or more
-            if(Math.Round(adjustedSize, decimalPlaces) >= 1000)
+            if (Math.Round(adjustedSize, decimalPlaces) >= 1000)
             {
                 mag += 1;
                 adjustedSize /= 1024;

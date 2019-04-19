@@ -19,7 +19,7 @@ namespace Status.Configuration.Database
             services.AddScoped<IReadingRepository, ReadingRepository>();
 
             //AppSettings
-            services.AddDbContext<StatusDbContext>(options => options.UseSqlServer(config.GetConnectionString("status.kragghc.dk"), o => o.MigrationsAssembly("Status.Web")));
+            services.AddDbContext<StatusDbContext>(options => options.UseSqlServer(config.GetConnectionString("azure.aspiri.dk"), o => o.MigrationsAssembly("Status.Web")));
         }
     }
 }

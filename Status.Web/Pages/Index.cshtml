@@ -2,13 +2,25 @@
 @model Status.Web.Pages.IndexModel
 @{
 }
-<h1>Status</h1>
-<div id="CPU_Container">
-    <canvas id="CPU"></canvas>
+<div id="TopContainer" class="Container">
+    <div id="CPU_Container">
+        <h3>CPU</h3>
+        <div id="CPU_CanvasContainer">
+        </div>
+    </div>
+    <div id="RAM_Container">
+        <h3>RAM</h3>
+        <div id="RAM"></div>
+        <h3></h3>
+    </div>
 </div>
-<div id="RAM"></div>
-<div id="Disks"></div>
-<div id="Created"></div>
+
+<div id="BottomContainer" class="Container">
+    <div id="Disks_Container">
+        <div id="Disks"></div>
+    </div>
+    <div id="Created"></div>
+</div>
 
 <script type="text/javascript">
 
@@ -16,7 +28,7 @@
     {
         Load();
     });
-    setInterval(Load, 5000);
+    setInterval(Refresh, 5000);
 
     function Load()
     {
@@ -26,48 +38,86 @@
                 url: '/Get/LatestHour',
                 success: function(result)
                 {
+                    Chart.defaults.global.defaultFontColor = "#FFF";
 
+                    var
+                        aspectRatio = 2,
+                        o = 0;
 
-                    //$("#CPU #Current").html(result.cpu);
-                    $("#RAM").html(result[0].ram);
-                    var disks = "";
-                    for(var i = 0; i < result[result.length - 1].disks.length; i++)
+                    if ($(window).innerWidth() > 1024)
                     {
-                        disks += "<div class='disk'><div class='disk_name'>" + result[result.length - 1].disks[i].name + "</div><div class='disk_freespace'>" + result[result.length - 1].disks[i].freeSpace + "</div></div>";
+                        Chart.defaults.global.defaultFontSize = 18;
+                    }
+                    else
+                    {
+                        Chart.defaults.global.defaultFontSize = 12;
+                        aspectRatio = 1;
+                        o = 30;
+                    }
+
+                    $("#RAM").html(Math.round(result[result.length - 1].ram) + "%");
+                    var disks = "";
+                    for (var i = 0; i < result[result.length - 1].disks.length; i++)
+                    {
+                        disks += "<div class='disk'><div class='disk_deviceID'>" + result[result.length - 1].disks[i].deviceID + "</div><div class='disk_name'>" + result[result.length - 1].disks[i].name + "</div><div class='disk_freespace'><i>Plads tilbage:</i><br />" + Math.round(((result[result.length - 1].disks[i].freeSpace / 1024) / 1024) / 1024) + "GB</div><div class='disk_usedspace'><i>Plads brugt:</i><br />" + Math.round(((result[result.length - 1].disks[i].size - result[result.length - 1].disks[i].freeSpace) / result[result.length - 1].disks[i].size) * 100) + "%</div></div>";
                     }
                     $("#Disks").html(disks);
                     $("#Created").html(result[result.length - 1].time.replace("-", "/").replace("-", "/"));
                     var time = [];
                     var cpu = [];
-                    for(var i = 0; i < result.length; i++)
+                    for (o; o < result.length; o++)
                     {
-                        time.push(result[i].time.substring(result[i].time.lastIndexOf(" ") + 1));
-                        cpu.push(result[i].cpu);
+                        time.push(result[o].time.substring(result[o].time.lastIndexOf(" ") + 1));
+                        cpu.push(result[o].cpu);
                     }
+
 
                     var config =
                     {
                         type: 'line',
-                        data: {
+                        data:
+                        {
                             labels: time,
-                            datasets: [{
-                                backgroundColor: "#9E2EE8",
-                                borderColor: "#9E2EE8",
-                                data: cpu,
-                                fill: true
-                            }]
+                            datasets:
+                                [{
+                                    backgroundColor: "#c50c51",
+                                    borderColor: "#c50c51",
+                                    borderWidth: 0,
+                                    lineTension: 0.4,
+                                    borderJoinStyle: "round",
+                                    borderCapStyle: "round",
+                                    data: cpu,
+                                    fill: true
+                                }]
                         },
-                        options: {
+                        options:
+                        {
+
                             animation: false,
                             legend:
                             {
                                 display: false
                             },
                             responsive: true,
+                            aspectRatio: aspectRatio,
                             tooltips:
                             {
                                 mode: 'index',
-                                intersect: false
+                                intersect: false,
+                                displayColors: false,
+                                xAlign: "center",
+                                yAlign: "center",
+                                bodyAlign: "center",
+                                footerAlign: "center",
+                                callbacks:
+                                {
+                                    label:
+                                        function(tooltipItem, data)
+                                        {
+                                            var label = tooltipItem.value + "%";
+                                            return label;
+                                        }
+                                }
                             },
                             hover:
                             {
@@ -81,7 +131,7 @@
                                         display: true,
                                         scaleLabel:
                                         {
-                                            display: true,
+                                            display: false,
                                             labelString: 'Time'
                                         }
                                     }],
@@ -95,7 +145,7 @@
                                         display: true,
                                         scaleLabel:
                                         {
-                                            display: true,
+                                            display: false,
                                             labelString: '% CPU Usage'
                                         }
                                     }]
@@ -105,20 +155,16 @@
                                 point:
                                 {
                                     radius: 0
-                                },
-                                tooltip:
-                                {
-                                    yAlign: 'bottom'
                                 }
                             }
                         }
                     };
-                    $("#CPU_Container").html("");
-                    $("#CPU_Container").append("<canvas id='CPU'></canvas>");
+
+                    $("#CPU_CanvasContainer").append("<canvas id='CPU'></canvas>");
 
                     var div = document.getElementById("CPU");
                     var ctx = div.getContext('2d');
-                    
+
                     window.myLine = new Chart(ctx, config);
 
                 },
@@ -132,109 +178,70 @@
 
     function Refresh()
     {
+        var chart = window.myLine;
         $.ajax
             ({
                 type: 'GET',
                 url: '/Get/LatestHour',
                 success: function(result)
                 {
-
-
-                    //$("#CPU #Current").html(result.cpu);
-                    $("#RAM").html(result[0].ram);
-                    var disks = "";
-                    for(var i = 0; i < result[result.length - 1].disks.length; i++)
+                    var
+                        update = false,
+                        o = 0;
+                    if ($(window).innerWidth() > 1024)
                     {
-                        disks += "<div class='disk'><div class='disk_name'>" + result[result.length - 1].disks[i].name + "</div><div class='disk_freespace'>" + result[result.length - 1].disks[i].freeSpace + "</div></div>";
+                        if (chart.aspectRatio == 1)
+                        {
+                            Chart.defaults.global.defaultFontSize = 18;
+                            chart.aspectRatio = 2;
+                            update = true;
+                        }
                     }
-                    $("#Disks").html(disks);
-                    $("#Created").html(result[result.length - 1].time.replace("-", "/").replace("-", "/"));
+                    else
+                    {
+                        if (chart.aspectRatio == 2)
+                        {
+                            Chart.defaults.global.defaultFontSize = 12;
+                            chart.aspectRatio = 1;
+                            update = true;
+                        }
+                        o = 30;
+                    }
+
+                    var disks = "";
+                    for (var i = 0; i < result[result.length - 1].disks.length; i++)
+                    {
+                        disks += "<div class='disk'><div class='disk_deviceID'>" + result[result.length - 1].disks[i].deviceID + "</div><div class='disk_name'>" + result[result.length - 1].disks[i].name + "</div><div class='disk_freespace'><i>Plads tilbage:</i><br />" + Math.round(((result[result.length - 1].disks[i].freeSpace / 1024) / 1024) / 1024) + "GB</div><div class='disk_usedspace'><i>Plads brugt:</i><br />" + Math.round(((result[result.length - 1].disks[i].size - result[result.length - 1].disks[i].freeSpace) / result[result.length - 1].disks[i].size) * 100) + "%</div></div>";
+                    }
+
+                    if ($("#RAM").html(Math.round(result[result.length - 1].ram)) + "%")
+                        $("#RAM").html(Math.round(result[result.length - 1].ram) + "%");
+
+                    if ($("#Disks").html() != disks)
+                        $("#Disks").html(disks);
+
+                    if ($("#Created").html() != result[result.length - 1].time.replace("-", "/").replace("-", "/"))
+                        $("#Created").html(result[result.length - 1].time.replace("-", "/").replace("-", "/"));
+
                     var time = [];
                     var cpu = [];
-                    for(var i = 0; i < result.length; i++)
+                    for (o; o < result.length; o++)
                     {
-                        time.push(result[i].time.substring(result[i].time.lastIndexOf(" ") + 1));
-                        cpu.push(result[i].cpu);
+                        time.push(result[o].time.substring(result[0].time.lastIndexOf(" ") + 1));
+                        cpu.push(result[o].cpu);
                     }
 
-                    var config =
+                    if (chart.data.datasets[0].data != cpu)
                     {
-                        type: 'line',
-                        data: {
-                            labels: time,
-                            datasets: [{
-                                backgroundColor: "#9E2EE8",
-                                borderColor: "#9E2EE8",
-                                data: cpu,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            animation: false,
-                            legend:
-                            {
-                                display: false
-                            },
-                            responsive: false,
-                            tooltips:
-                            {
-                                mode: 'index',
-                                intersect: false
-                            },
-                            hover:
-                            {
-                                mode: 'index',
-                                intersect: false
-                            },
-                            scales:
-                            {
-                                xAxes:
-                                    [{
-                                        display: true,
-                                        scaleLabel:
-                                        {
-                                            display: true,
-                                            labelString: 'Time'
-                                        }
-                                    }],
-                                yAxes:
-                                    [{
-                                        ticks:
-                                        {
-                                            min: 0,
-                                            max: 100
-                                        },
-                                        display: true,
-                                        scaleLabel:
-                                        {
-                                            display: true,
-                                            labelString: '% CPU Usage'
-                                        }
-                                    }]
-                            },
-                            elements:
-                            {
-                                point:
-                                {
-                                    radius: 0
-                                },
-                                tooltip:
-                                {
-                                    yAlign: 'bottom'
-                                }
-                            }
-                        }
-                    };
+                        chart.data.datasets[0].data = cpu;
+                        chart.data.labels = time;
+                        update = true;
+                    }
 
-                    var ctx = document.getElementById('CPU').getContext('2d');
-                    $(ctx).html("");
-                    window.myLine = new Chart(ctx, config);
-
-                },
-                error: function(e)
-                {
-                    console.log("error:");
-                    console.log(e);
+                    if (update)
+                    {
+                        chart.update();
+                    }
                 }
             });
     }

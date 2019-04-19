@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Status.Data\Status.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Config\AppSettings.json" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+  
 </Project>
