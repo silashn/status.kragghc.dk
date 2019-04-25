@@ -8,10 +8,19 @@
         <div id="CPU_CanvasContainer">
         </div>
     </div>
-    <div id="RAM_Container">
-        <h3>RAM</h3>
-        <div id="RAM"></div>
-        <h3></h3>
+    <div id="Percentage_Container">
+        <div id="CPU_Percent">
+            <div class="Percentage_Inner_Container">
+                <h3>CPU</h3>
+                <div id="CPU_Val"></div>
+            </div>
+        </div>
+        <div id="RAM_Percent">
+            <div class="Percentage_Inner_Container">
+                <h3>RAM</h3>
+                <div id="RAM_Val"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -26,51 +35,9 @@
 
     $(window).ready(function()
     {
-        //var ctx = document.getElementById('CPU').getContext('2d');
-
-        //var chart = new Chart(ctx, {
-
-        //    type: 'line',
-
-        //    data: {
-
-        //        datasets: [{
-
-        //            data: []
-
-        //        }]
-
-        //    },
-
-        //    options: {
-
-        //        scales: {
-
-        //            xAxes: [{
-
-        //                type: 'realtime',
-        //                realtime:
-        //                {
-        //                    onRefresh: function(chart)
-        //                    {
-        //                        chart.data.datasets[0].data.push(
-        //                            {
-        //                                x: Date.now(),
-        //                                y: Math.random()
-        //                            });
-        //                    }
-        //                }
-
-        //            }]
-
-        //        }
-
-        //    }
-
-        //});
         Load();
+        setInterval(Refresh, 5000);
     });
-    //setInterval(Refresh, 5000);
 
     function Load()
     {
@@ -84,39 +51,48 @@
 
                     var
                         aspectRatio = 2,
-                        o = 0,
-                        a = 3557500;
+                        o = 0;
 
-                    if ($(window).innerWidth() > 1024)
+                    if($(window).innerWidth() > 1024)
                     {
                         Chart.defaults.global.defaultFontSize = 18;
+                        aspectRatio = 2;
                     }
                     else
                     {
                         Chart.defaults.global.defaultFontSize = 12;
                         aspectRatio = 1;
-                        o = 30;
-                        a = a / 2;
+                        if(result.length >= 50)
+                            o = 30;
                     }
 
-                    $("#RAM").html(Math.round(result[result.length - 1].ram) + "%");
+                    $("#RAM_Val").html(Math.round(result[result.length - 1].ram) + "%");
                     var disks = "";
-                    for (var i = 0; i < result[result.length - 1].disks.length; i++)
+                    for(var i = 0; i < result[result.length - 1].disks.length; i++)
                     {
                         disks += "<div class='disk'><div class='disk_deviceID'>" + result[result.length - 1].disks[i].deviceID + "</div><div class='disk_name'>" + result[result.length - 1].disks[i].name + "</div><div class='disk_freespace'><i>Plads tilbage:</i><br />" + Math.round(((result[result.length - 1].disks[i].freeSpace / 1024) / 1024) / 1024) + "GB</div><div class='disk_usedspace'><i>Plads brugt:</i><br />" + Math.round(((result[result.length - 1].disks[i].size - result[result.length - 1].disks[i].freeSpace) / result[result.length - 1].disks[i].size) * 100) + "%</div></div>";
                     }
                     $("#Disks").html(disks);
                     $("#Created").html(result[result.length - 1].time.replace("-", "/").replace("-", "/"));
+                    $("#CPU_Val").html(result[result.length - 1].cpu + "%");
 
-
+                    var time = [];
+                    var cpu = [];
+                    for(o; o < result.length; o++)
+                    {
+                        time.push(result[o].time.substring(result[0].time.lastIndexOf(" ") + 1));
+                        cpu.push(result[o].cpu);
+                    }
 
                     var config =
                     {
                         type: 'line',
                         data:
                         {
+                            labels: time,
                             datasets:
                                 [{
+                                    data: cpu,
                                     backgroundColor: "#c50c51",
                                     borderColor: "#c50c51",
                                     borderWidth: 0,
@@ -170,47 +146,6 @@
                                             display: false,
                                             labelString: 'Time'
                                         },
-                                        type: 'realtime',
-                                        realtime:
-                                        {
-                                            duration: a,
-                                            refresh: 1000,
-                                            delay: 2000,
-                                            onRefresh: function(chart)
-                                            {
-                                                $.ajax
-                                                    ({
-                                                        type: 'GET',
-                                                        url: '/Get/LatestReading',
-                                                        success: function(result)
-                                                        {
-                                                            if (chart.data.datasets[0].data[chart.data.datasets[0].data.length - 1].x != result.created)
-                                                            {
-                                                                chart.data.datasets[0].data.push
-                                                                    (
-                                                                        {
-                                                                            x: result.created.replace("T", " ").substring(0, result.created.lastIndexOf(".")),
-                                                                            y: result.cpu,
-                                                                        }
-                                                                    );
-                                                            }
-
-                                                            if ($(window).innerWidth() > 1024)
-                                                            {
-                                                                Chart.defaults.global.defaultFontSize = 18;
-                                                                window.myLine.options.aspectRatio = 2;
-                                                                window.myLine.options.scales.xAxes[0].realtime.duration = 3557500;
-                                                            }
-                                                            else
-                                                            {
-                                                                Chart.defaults.global.defaultFontSize = 12;
-                                                                window.myLine.options.aspectRatio = 1;
-                                                                window.myLine.options.scales.xAxes[0].realtime.duration = 1778750;
-                                                            }
-                                                        }
-                                                    });
-                                            }
-                                        },
                                         time:
                                         {
                                             displayFormats:
@@ -258,17 +193,6 @@
                     var ctx = div.getContext('2d');
 
                     window.myLine = new Chart(ctx, config);
-
-                    for (o; o < result.length; o++)
-                    {
-                        window.myLine.data.datasets[0].data.push(
-                            {
-                                x: result[o].created.replace("T", " ").substring(0, result[o].created.lastIndexOf(".")),
-                                y: result[o].cpu
-                            });
-                    }
-
-                    window.myLine.update();
                 },
                 error: function(e)
                 {
@@ -281,69 +205,43 @@
     function Refresh()
     {
         var chart = window.myLine;
+
         $.ajax
             ({
                 type: 'GET',
-                url: '/Get/LatestHour',
+                url: '/Get/LatestReading',
                 success: function(result)
                 {
-                    var
-                        update = false,
-                        o = 0;
-                    if ($(window).innerWidth() > 1024)
+                    if(result.time.substring(result.time.lastIndexOf(" ") + 1) != chart.data.labels[chart.data.labels.length - 1])
                     {
-                        if (chart.aspectRatio == 1)
+                        chart.data.datasets[0].data.push(result.cpu);
+                        chart.data.labels.push(result.time.substring(result.time.lastIndexOf(" ") + 1));
+                        chart.data.labels.shift();
+                        chart.data.datasets[0].data.shift();
+                        $("#RAM_Val").html(Math.round(result.ram) + "%");
+                        var disks = "";
+                        for(var i = 0; i < result.disks.length; i++)
                         {
-                            Chart.defaults.global.defaultFontSize = 18;
-                            chart.aspectRatio = 2;
-                            update = true;
+                            disks += "<div class='disk'><div class='disk_deviceID'>" + result.disks[i].deviceID + "</div><div class='disk_name'>" + result.disks[i].name + "</div><div class='disk_freespace'><i>Plads tilbage:</i><br />" + Math.round(((result.disks[i].freeSpace / 1024) / 1024) / 1024) + "GB</div><div class='disk_usedspace'><i>Plads brugt:</i><br />" + Math.round(((result.disks[i].size - result.disks[i].freeSpace) / result.disks[i].size) * 100) + "%</div></div>";
                         }
+                        $("#Disks").html(disks);
+                        $("#Created").html(result.time.replace("-", "/").replace("-", "/"));
+                        $("#CPU_Val").html(result.cpu + "%");
+                        chart.update();
+                    }
+
+                    if($(window).innerWidth() > 1024)
+                    {
+                        Chart.defaults.global.defaultFontSize = 18;
+                        window.myLine.options.aspectRatio = 2;
+                        chart.update();
                     }
                     else
                     {
-                        if (chart.aspectRatio == 2)
-                        {
-                            Chart.defaults.global.defaultFontSize = 12;
-                            chart.aspectRatio = 1;
-                            update = true;
-                        }
-                        o = 30;
+                        Chart.defaults.global.defaultFontSize = 12;
+                        window.myLine.options.aspectRatio = 1;
+                        chart.update();
                     }
-
-                    var disks = "";
-                    for (var i = 0; i < result[result.length - 1].disks.length; i++)
-                    {
-                        disks += "<div class='disk'><div class='disk_deviceID'>" + result[result.length - 1].disks[i].deviceID + "</div><div class='disk_name'>" + result[result.length - 1].disks[i].name + "</div><div class='disk_freespace'><i>Plads tilbage:</i><br />" + Math.round(((result[result.length - 1].disks[i].freeSpace / 1024) / 1024) / 1024) + "GB</div><div class='disk_usedspace'><i>Plads brugt:</i><br />" + Math.round(((result[result.length - 1].disks[i].size - result[result.length - 1].disks[i].freeSpace) / result[result.length - 1].disks[i].size) * 100) + "%</div></div>";
-                    }
-
-                    if ($("#RAM").html(Math.round(result[result.length - 1].ram)) + "%")
-                        $("#RAM").html(Math.round(result[result.length - 1].ram) + "%");
-
-                    if ($("#Disks").html() != disks)
-                        $("#Disks").html(disks);
-
-                    if ($("#Created").html() != result[result.length - 1].time.replace("-", "/").replace("-", "/"))
-                        $("#Created").html(result[result.length - 1].time.replace("-", "/").replace("-", "/"));
-
-                    //var time = [];
-                    //var cpu = [];
-                    //for (o; o < result.length; o++)
-                    //{
-                    //    time.push(result[o].time.substring(result[0].time.lastIndexOf(" ") + 1));
-                    //    cpu.push(result[o].cpu);
-                    //}
-
-                    //if (chart.data.datasets[0].data != cpu)
-                    //{
-                    //    chart.data.datasets[0].data = cpu;
-                    //    chart.data.labels = time;
-                    //    update = true;
-                    //}
-
-                    //if (update)
-                    //{
-                    //    chart.update();
-                    //}
                 }
             });
     }

@@ -1,178 +1,65 @@
-﻿*
-{
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
+﻿* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
-html, body
-{
-    margin: 0;
-    padding: 0;
-}
+html, body { margin: 0; padding: 0; }
 
-h3
-{
-    font-size: 40px;
-    margin:20px 0;
-}
+body, td, div, img { margin: 0px; cursor: none; }
 
-.Container
-{
-    font-size: 18px;
-    font-family: Calibri;
-    padding: 25px 25px;
-    width: 100%;
-    display: flex;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
-    color: #FFF;
-}
+h3 { font-size: 40px; margin: 20px 0; }
 
-    .Container#TopContainer
-    {
-        background-color: #092a3a;
-        height: 65vh;
-    }
+.Container { font-size: 18px; font-family: Calibri; padding: 25px 25px; width: 100%; display: flex; -webkit-justify-content: space-between; justify-content: space-between; color: #FFF; }
 
-    .Container#BottomContainer
-    {
-        background-color: #850837;
-        -ms-flex-direction: column;
-        -webkit-flex-direction: column;
-        flex-direction: column;
-        height: 35vh;
-    }
+    .Container#TopContainer { background-color: #092a3a; height: 65vh; }
 
-#CPU_Container, #RAM_Container, .disk
-{
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    text-align: center;
-    padding: 10px;
-}
+    .Container#BottomContainer { background-color: #850837; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; height: 35vh; }
 
-#CPU_Container, #RAM_Container
-{
-    background-color: #0d3d54;
-}
+#CPU_Container, #Percentage_Container, .disk { -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; text-align: center; padding: 10px; }
 
-#CPU_Container
-{
-    width: 60%;
-}
+#CPU_Container, #Percentage_Container { background-color: #0d3d54; }
 
-#RAM_Container
-{
-    width: 38%;
-    display: flex;
-    -ms-flex-direction: column;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
-}
-#RAM
-{
-    font-size: 80px;
-    /*
+#CPU_Container { width: 60%; }
+
+#Percentage_Container { width: 38%; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; -webkit-justify-content: space-around; justify-content: space-around; }
+
+#CPU_Percent, #RAM_Percent { }
+
+#RAM_Val, #CPU_Val { font-size: 80px; /*
         position:absolute;
         top: calc(50% - 89px);
-    */
-}
+    */ }
 
-#Disk_Container
-{
-    width: 100%;
-}
+#Disk_Container { width: 100%; }
 
-#Disks
-{
-    display: flex;
-    -ms-flex-wrap: wrap;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
-}
+#Disks { display: flex; -ms-flex-wrap: wrap; -webkit-flex-wrap: wrap; flex-wrap: wrap; -webkit-justify-content: space-between; justify-content: space-between; }
 
-.disk
-{
-    background-color: #c50c51;
-    min-width: 25%;
-    -ms-flex: 1;
-    -webkit-flex: 1;
-    flex: 1;
-}
+.disk { background-color: #c50c51; min-width: 25%; -ms-flex: 1; -webkit-flex: 1; flex: 1; }
 
-    .disk:nth-child(3n+2)
-    {
-        margin: 0px 20px;
-    }
+    .disk:nth-child(3n+2) { margin: 0px 20px; }
 
-    .disk .disk_name, .disk .disk_deviceID
-    {
-        font-size: 30px;
-    }
+    .disk .disk_name, .disk .disk_deviceID { font-size: 30px; }
 
-    .disk .disk_freespace, .disk .disk_usedspace
-    {
-        font-size: 30px;
-    }
+    .disk .disk_freespace, .disk .disk_usedspace { font-size: 30px; }
 
-        .disk .disk_freespace i, .disk .disk_usedspace i
-        {
-            font-size: 18px;
-        }
+        .disk .disk_freespace i, .disk .disk_usedspace i { font-size: 18px; }
 
-#Created
-{
-    text-transform: capitalize;
-    font-size: 32px;
-}
+#Created { text-transform: capitalize; font-size: 32px; }
 
-@media only screen and (max-width: 1024px)
-{
-    .Container
-    {
-        -ms-flex-direction: column;
-        -webkit-flex-direction: column;
-        flex-direction: column;
-        -webkit-justify-content: space-between;
-        justify-content: space-between;
-        padding:20px 10px;
-    }
-    .Container#TopContainer, .Container#BottomContainer
-    {
-        height:auto;
-    }
+@media only screen and (max-width: 1024px) {
+    .Container { -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; -webkit-justify-content: space-between; justify-content: space-between; padding: 20px 10px; }
+        .Container#TopContainer, .Container#BottomContainer { height: auto; }
 
-    #CPU_Container, #RAM_Container, .disk
-    {
-        width:100%;
-    }
+    #CPU_Container, #RAM_Container, .disk, #Percentage_Container { width: 100%; }
 
-    #CPU_Container
-    {
-        margin-bottom:20px;
-        padding:0px;
-    }
+    #CPU_Container { margin-bottom: 20px; padding: 0px; }
 
-    #Disks .disk
-    {
-        min-width:35%;
-        margin:0px 0px 20px 0px;
-    }
+    #Percentage_Container { background-color: #092a3a; padding: 0; }
 
-    #Disks .disk:nth-child(2n)
-    {
-        margin-left:20px;
-    }
+    #CPU_Percent { margin-bottom: 20px; }
 
-    h3
-    {
-        font-size:35px;
-        margin:10px 0;
-    }
+    #CPU_Percent, #RAM_Percent { background-color: #0d3d54; border-radius: 5px; }
+
+    #Disks .disk { min-width: 35%; margin: 0px 0px 20px 0px; }
+
+        #Disks .disk:nth-child(2n) { margin-left: 20px; }
+
+    h3 { font-size: 35px; margin: 10px 0; }
 }
