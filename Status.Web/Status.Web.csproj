@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Config\AppSettings.json" CopyToPublishDirectory="Always"/>
-    <None Include="wwwroot\Assets\CSS\Main.css" CopyToPublishDirectory="Always"/>
-    <None Include="wwwroot\Assets\JavaScript\JQuery.js" CopyToPublishDirectory="Always"/>
+    <None Include="Config\AppSettings.json" CopyToPublishDirectory="Always" />
+    <None Include="wwwroot\Assets\CSS\Main.css" CopyToPublishDirectory="Always" />
+    <None Include="wwwroot\Assets\JavaScript\JQuery.js" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +18,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Status.Configuration\Status.Configuration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Assets\Images\" />
   </ItemGroup>
 
 </Project>

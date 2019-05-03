@@ -36,8 +36,20 @@
     $(window).ready(function()
     {
         Load();
-        setInterval(Refresh, 5000);
+        setInterval(Refresh, GetDelay());
     });
+
+    function GetDelay()
+    {
+        var input;
+
+        while(!input || input < 500)
+        {
+            input = parseInt(prompt("Indtast opdaterings tid i millisekunder (minimum 500):", "1000"));
+        }
+
+        return input;
+    }
 
     function Load()
     {
@@ -110,8 +122,9 @@
                             {
                                 display: false
                             },
-                            responsive: true,
                             aspectRatio: aspectRatio,
+                            responsive: true,
+                            maintainAspectRatio: true,
                             tooltips:
                             {
                                 mode: 'index',
@@ -187,7 +200,7 @@
                         }
                     };
 
-                    $("#CPU_CanvasContainer").append("<canvas id='CPU' aria-label='CPU Chart' role='chart'></canvas>");
+                    $("#CPU_CanvasContainer").append("<canvas id='CPU' style='position:relative; ' aria-label='CPU Chart' role='chart'></canvas>");
 
                     var div = document.getElementById("CPU");
                     var ctx = div.getContext('2d');
@@ -201,6 +214,9 @@
                 }
             });
     }
+
+    var
+        small = ($(window).innerWidth() <= 1024);
 
     function Refresh()
     {
@@ -230,19 +246,26 @@
                         chart.update();
                     }
 
-                    if($(window).innerWidth() > 1024)
-                    {
-                        Chart.defaults.global.defaultFontSize = 18;
-                        window.myLine.options.aspectRatio = 2;
-                        chart.update();
-                    }
-                    else
-                    {
-                        Chart.defaults.global.defaultFontSize = 12;
-                        window.myLine.options.aspectRatio = 1;
-                        chart.update();
-                    }
                 }
             });
     }
+
+    $(window).resize(function()
+    {
+        var chart = window.myLine;
+            console.log(chart);
+
+        if($(window).innerWidth() > 1024)
+        {
+            Chart.defaults.global.defaultFontSize = 18;
+            chart.options.aspectRatio = 2;
+            chart.update();
+        }
+        else
+        {
+            Chart.defaults.global.defaultFontSize = 12;
+            chart.options.aspectRatio = 1;
+            chart.update();
+        }
+    });
 </script>
